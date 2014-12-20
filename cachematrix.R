@@ -1,15 +1,38 @@
-## Put comments here that give an overall description of what your
-## functions do
+# 缓存逆矩阵
 
-## Write a short comment describing this function
-
+# 该函数用于创建可缓存逆矩阵的特殊“矩阵”对象
+# INPUTS: (matrix) x
+# OUTPUTS: (function list) set, get, setSolve, getSolve
 makeCacheMatrix <- function(x = matrix()) {
-
+    s <- NULL
+    
+    set <- function(y) {
+        x <<- y
+        s <<- NULL #更改矩阵数据后，需要重设S
+    }
+    
+    get <- function() x
+    
+    setSolve <- function(solve) s <<- solve
+    
+    getSolve <- function() s
+    
+    list(set = set, get = get, setSolve = setSolve, getSolve = getSolve)
 }
 
-
-## Write a short comment describing this function
-
+# 该函数用于计算上述makeCacheMatrix返回的特殊“矩阵”的逆矩阵
+# INPUTS: (cached matrix) x
+# OUPUTS: (inverse of cached matrix) s
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+    s <- x$getSolve()
+    
+    if(!is.null(s)) {
+        message("getting cached inverse matrix")
+        return(s)
+    }
+    
+    data <- x$get()
+    s <- solve(data, ...)
+    x$setSolve(s)
+    s
 }
